@@ -18,56 +18,6 @@ class Lagragean_Steiner(LagrangeanModel):
         self.costs = { (u.id, v.id): w for edge in problem_instance.edges for ((u, v), w) in edge.items() }
         self.x = {}
         self.f = {}
-
-    def create_objective(self, u: dict[tuple[int, int, int], float]):
-        logger.debug("Creating Lagrangian objective w(u)")
-
-        lagrangean_costs = {
-            (i, j): self.costs[i, j] - sum(u.get((i, j, k), 0) for k in self.Tr)
-            for (i, j) in self.E
-        }
-
-        x_term = pulp.lpSum(lagrangean_costs[i, j] * self.x[i, j] for (i, j) in self.E)
-
-        f_term = pulp.lpSum(
-            u.get((i, j, k), 0) * self.f[i, j, k]
-            for k in self.Tr
-            for (i, j) in self.E
-        )
-
-        self.model += x_term + f_term
-
-    def create_variables(self,variable_type:str):
-        logger.debug("Creating x_ij variables")
-        self.x = pulp.LpVariable.dicts("x", self.E, cat=variable_type)
-        logger.debug("Creating f_ijk variables")
-        self.f = pulp.LpVariable.dicts("f", 
-                                       [(i, j, k) for (i, j) in self.E for k in self.Tr], 
-                                       lowBound=0, cat="Continuous")
-        
-    def create_constraints(self):
-        logger.debug("Creating flow conservation constraints for intermediate nodes (Eq. 2)")
-
-        for k in self.Tr:  
-            for ii in self.V:
-                if ii != self.r and ii != k:  
-                    inflow = pulp.lpSum(self.f[j, i, k] for (j, i) in self.E if j == ii)
-                    outflow = pulp.lpSum(self.f[i, j, k] for (i, j) in self.E if j == ii)
-                    self.model += (outflow - inflow == 0), f"flow_conservation_{ii}_{k}"
-
-        for k in self.Tr:
-            outflow = pulp.lpSum(self.f[k, j, k] for (i, j) in self.E if i == k)
-            inflow = pulp.lpSum(self.f[j, k, k] for (j, i) in self.E if i == k)
-            
-            self.model += (outflow - inflow == -1), f"sink_demand_{k}"
-
-    def solve_model(self):
-        solver = pulp.PULP_CBC_CMD(msg=0)
-        logger.debug("Solving Problem")
-        self.model.solve(solver)
-
-    def export_result(self,):
-        return (pulp.value(self.model.objective), self.model.solutionTime)
     
     def solve_x_objective(self,u: dict[tuple[int, int, int], float])->float:
         self.x:dict[tuple[int,int],float]={}

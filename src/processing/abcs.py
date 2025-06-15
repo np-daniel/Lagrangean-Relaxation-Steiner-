@@ -38,22 +38,6 @@ class LagrangeanModel(ABC):
         self.instance = problem_instance
 
     @abstractmethod
-    def create_objective(self):
-        pass
-    
-    @abstractmethod
-    def create_variables(self):
-        pass
-    
-    @abstractmethod
-    def create_constraints(self):
-        pass
-
-    @abstractmethod
-    def solve_model(self):
-        pass
-
-    @abstractmethod
     def process_lagrangean(self):
         pass
 
