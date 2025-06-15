@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: optimization-project
+Version: 0.1.0
+Summary: A project using PuLP and Pyomo for optimization modeling
+Author-email: Your Name <you@example.com>
+License-Expression: MIT
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: pulp>=2.7.0
+Requires-Dist: pyomo>=6.6.2
+Requires-Dist: pandas>=2.2.2
+Requires-Dist: natsort>=8.4.0
+Requires-Dist: networkx>=3.2.1
